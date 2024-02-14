@@ -6,6 +6,7 @@
 The web app is build with Blazor.\
 It uses Interactive Server mode to ensure interactivity on the client side.
 
+<a href="https://blazor-api-demo-app.azurewebsites.net/holidays">Here</a> you can check out the deployed test version of the app.
 
 <details>
   <summary><i>UI Screenshots</i></summary>
