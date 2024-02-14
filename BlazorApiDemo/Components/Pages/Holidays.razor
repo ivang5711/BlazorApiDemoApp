@@ -1,0 +1,117 @@
+﻿@page "/holidays"
+@inject INagerDateClient _nagerDateClient
+@inject IConfiguration _configuration
+
+@rendermode @(new InteractiveServerRenderMode(false))
+
+<PageTitle>Holidays</PageTitle>
+
+@if (_errorMessage is null)
+{
+    <h1 class="pb-2">Holidays</h1>
+    <div class="d-flex row row-cols-1 row-cols-sm-2 g-2">
+        <div class="col col-sm-auto">
+            <div class="form-floating">
+                <select class="form-select"
+                        @bind="@Year"
+                        @bind:after="ProcessSelection"
+                        id="floatingSelectGrid">
+                    @{
+                        int currentYear = DateTime.Now.Year;
+                        @for (int i = 0; i < _numberOfYears; i++)
+                        {
+                            <option value="@(currentYear - i)">
+                                @(currentYear - i)
+                            </option>
+                        }
+                    }
+                </select>
+                <label for="floatingSelectGrid">year</label>
+            </div>
+        </div>
+        <div class="col col-sm-auto">
+            <div class="form-floating">
+                <select class="form-select"
+                        @bind="@CountryCode"
+                        @bind:after="ProcessSelection"
+                        id="floatingSelectGrid">
+                    @foreach (var item in _countries)
+                    {
+                        <option value="@item.Value">
+                            @item.Key
+                        </option>
+                    }
+                </select>
+                <label for="floatingSelectGrid">country</label>
+            </div>
+        </div>
+    </div>
+    @if (_holidays is not null && _holidays.Count != 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="text-nowrap text-end">Date</th>
+                        <th class="text-nowrap">LocalName</th>
+                        <th class="text-nowrap">Name</th>
+                        <th class="text-nowrap">Country Code</th>
+                        <th class="text-nowrap">Fixed</th>
+                        <th class="text-nowrap">Global</th>
+                        <th class="text-nowrap">Counties</th>
+                        <th class="text-nowrap text-end">LaunchYear</th>
+                        <th class="text-nowrap">Types</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var holiday in _holidays)
+                    {
+                        <tr>
+                            <td class="text-end">
+                                @holiday.Date.ToLongDateString()
+                            </td>
+                            <td>@holiday.LocalName</td>
+                            <td>@holiday.Name</td>
+                            <td>@holiday.CountryCode</td>
+                            <td>@holiday.Fixed</td>
+                            <td>@holiday.Global</td>
+                            <td>
+                                <div>
+                                    <textarea class="form-control"
+                                              readonly>
+                                @if (holiday.Counties is not null
+                                    && holiday.Counties.Count != 0)
+                                {
+                                    @string.Join(", ", holiday.Counties);
+                                }
+                                </textarea>
+                                </div>
+                            </td>
+                            <td class="text-end">@holiday.LaunchYear</td>
+                            <td>
+                                <div>
+                                    <textarea class="form-control"
+                                              readonly>
+                                @if (holiday.Types is not null
+                                    && holiday.Types.Count != 0)
+                                {
+                                    @string.Join(", ", holiday.Types);
+                                }
+                                </textarea>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p><em>Loading...</em></p>
+    }
+}
+else
+{
+    <p>@_errorMessage</p>
+}
